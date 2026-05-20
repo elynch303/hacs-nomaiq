@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import re
 from typing import Any
 
@@ -92,6 +93,7 @@ class NomaIQSwitchEntity(SwitchEntity):
         self.coordinator = coordinator
         self._device = device
         self._property_name = property_name
+        self._is_outlet_property = _is_outlet_property(property_name)
         self._attr_name = _property_display_name(property_name, property_data)
         self._attr_has_entity_name = True
         self._attr_unique_id = (
@@ -120,12 +122,16 @@ class NomaIQSwitchEntity(SwitchEntity):
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         """Turn device on."""
-        await self._device.async_set_property_value(self._property_name, True)
+        value: bool | int = 1 if self._is_outlet_property else True
+        await self._device.async_set_property_value(self._property_name, value)
+        await asyncio.sleep(1)
         await self.coordinator.async_request_refresh()
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         """Turn device off."""
-        await self._device.async_set_property_value(self._property_name, False)
+        value: bool | int = 0 if self._is_outlet_property else False
+        await self._device.async_set_property_value(self._property_name, value)
+        await asyncio.sleep(1)
         await self.coordinator.async_request_refresh()
 
     async def async_update(self) -> None:
