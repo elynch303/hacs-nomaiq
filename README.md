@@ -7,6 +7,8 @@ This integration exposes devices from the Noma IQ app. For now, only the current
 - Garage Door Opener
 - Garage Door Opener's Light
 
+It also includes generic Home Assistant `switch` support for writable boolean Ayla properties, which is intended to cover Noma IQ smart plugs and similar on/off devices. Specific plug models may still need property-level validation.
+
 ## Installation
 
 Installation is done like any other Home Assistant HACS integration.
@@ -37,6 +39,16 @@ After installation, setup the integration via the web UI like any other integrat
 ### Troubleshooting
 
 If you are having issues connecting, make sure your credentials are correct using the Noma IQ in your mobile app. If you're still having trouble, you can open a new issue here: https://github.com/mnfjorge/hacs-nomaiq/issues/new
+
+### Probe A Device Before Installing In Home Assistant
+
+If you want to confirm that a Noma IQ device exposes usable switch properties before loading this custom component into Home Assistant, run:
+
+```bash
+python3 scripts/probe_nomaiq.py --username YOUR_EMAIL --device-name "outdoor"
+```
+
+Add `--json` if you want the raw matching property data. For the outdoor 2-outlet plug, the expected result is that the device shows one or more writable boolean properties that correspond to the controllable outlets.
 
 ## Contributions
 
